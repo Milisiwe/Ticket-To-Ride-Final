@@ -16,7 +16,7 @@ public class ZoomCityNames : MonoBehaviour
     public void OnHoverEnter()
     {
         //position of the enlarged image of the game object
-        ZoomCityName = Instantiate(gameObject, new Vector2(Input.mousePosition.x, Input.mousePosition.y + 50) Quaternion.identity);
+        ZoomCityName = Instantiate(gameObject, new Vector2(Input.mousePosition.x, Input.mousePosition.y + 50), Quaternion.identity);
         ZoomCityName.transform.SetParent(Canvas.transform, false);
 
         //create new layer so that the game objects don't collide if there is a collider component
