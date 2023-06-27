@@ -1,0 +1,30 @@
+using Systems.Collections;
+using System.Collection.Generic;
+using UnityEngine;
+
+public class EndGameManager : MonoBehaviour
+{
+   public ScoreMangaer scoreManager;
+   public DestinationCardManager destinationCardManager;
+   public LongestLengthPath longestLengthPath;
+
+   public void CalculateScores()
+   {  
+        scoreManager.ScoreValue = 0;
+        int routeScore = CalculateRouteScores();
+        scoreManager.UpdateScore(routeScore);
+
+        int destinationScore = CalculateDestinationScores();
+        ScoreManager.UpdateScore(destinationScore);
+
+       int LongestPathBonus = CalculateLongestPathBonus();
+      scoreManager.UpdateScore(longestPathBonus);
+    
+   }
+
+  private int CalculateRouteScores()
+  {
+     
+  }
+}
+
