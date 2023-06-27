@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DragDropMovement : MonoBehaviour
 {
-    private bool isDragging = false;
+    /*private bool isDragging = false;
     private Vector2 StartPos;
 
     private bool isOverDropZone = false;
@@ -63,5 +63,5 @@ public class DragDropMovement : MonoBehaviour
             transform.position = StartPos;
             transform.SetParent(StartParent.transform, false);
         }
-    }
+    }*/
 }

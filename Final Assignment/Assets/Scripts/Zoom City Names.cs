@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ZoomCityNames : MonoBehaviour
-{
-    public GameObject Canvas;
+{ 
+    /*public GameObject Canvas;
     public GameObject ZoomCityName;
 
     public void Awake()
@@ -32,5 +32,5 @@ public class ZoomCityNames : MonoBehaviour
     {
         //when not hovering over game object, destroy the new component made so that it disappears
         Destroy(ZoomCityName);
-    }
+    }*/
 }
