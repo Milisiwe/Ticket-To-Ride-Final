@@ -1,0 +1,204 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class PlayerManager : MonoBehaviour
+{
+    [Header("Player 1")]
+    public int playerOneScore = 0;
+    public int playerOneTrains = 45;
+
+    [Header("Player 2")]
+    public int playerTwoScore = 0;
+    public int playerTwoTrains = 45;
+
+    public bool playerTurn = true; //Player1 = true, Player2 = false
+    int endGame = 0;
+
+    [Header("Player Game Objects")]
+    public GameObject Player1Holder; 
+    public GameObject Player2Holder;
+    public GameObject PlayerPause;
+
+    [Header("Stats")]
+    public TextMeshProUGUI playerOneScoreText; 
+    public TextMeshProUGUI playerTwoScoreText;
+    public TextMeshProUGUI playerOneTrainsText; 
+    public TextMeshProUGUI playerTwoTrainsText;
+
+    [Header("Routes Claimed")]
+    public List<RoutesDatabase> playerOneClaimedRoutes = new List<RoutesDatabase>();
+    public List<RoutesDatabase> playerTwoClaimedRoutes = new List<RoutesDatabase>();
+
+    [Header("End of Game")]
+    public GameObject endTurnButton;
+    public GameObject endGameButton;
+    public GameObject endGamePanel;
+    public int P1finalScore;
+    public TextMeshProUGUI p1finalscoretext;
+    public int P2finalScore;
+    public TextMeshProUGUI p2finalscoretext;
+    public bool calculatedScore = false;
+
+    [Header("Manager")]
+    public CardDatabase cardDatabase ;
+    public GameObject cardManagerHolder;
+
+
+    private void Start()
+    {
+        cardManagerHolder = GameObject.FindGameObjectWithTag("CardDatabase"); //Gets the deck manager object existing in the scene
+        cardDatabase = cardManagerHolder.GetComponent<CardDatabase>();
+    }
+
+    public void RefreshScore()
+    {
+        if(playerOneTrains<0)
+        {
+            playerOneTrains = 0;
+        }
+        if(playerTwoTrains<0)
+        {
+            playerTwoTrains = 0;
+        }
+        playerOneScoreText.text = playerOneScore.ToString();
+        playerTwoScoreText.text = playerTwoScore.ToString();
+        playerOneTrainsText.text = playerOneTrains.ToString();
+        playerTwoTrainsText.text = playerTwoTrains.ToString(); 
+
+    }
+
+    public void EndTurn()
+    {
+        PlayerPause.SetActive(true);
+
+        if(playerTurn)
+        {
+            Player1Holder.SetActive(false);
+            Player2Holder.SetActive(true);
+            playerTurn = false;
+            Debug.Log("Player 2 Start");
+            RoutesDatabase.claimededRoutesPlayer1.AddRange(playerOneClaimedRoutes);
+        }
+        else
+        {
+            Player2Holder.SetActive(false);
+            Player1Holder.SetActive(true);
+            playerTurn = true;
+            Debug.Log("Player 1 Start");
+            RoutesDatabase.claimededRoutesPlayer2.AddRange(playerTwoClaimedRoutes);
+        }
+
+    }
+
+    private void Update()
+    {
+        if(playerOneTrains <=2 || playerTwoTrains <=2)
+        {
+            endTurnButton.SetActive(false);
+            endGameButton.SetActive(true);
+
+            if (endGame == 3 && !calculatedScore)
+            {
+                endGamePanel.SetActive(true);
+                p1finalscoretext.text = P1finalScore.ToString();
+                p2finalscoretext.text = P2finalScore.ToString();
+                CalculateScoreP1();
+                CalculateScoreP2();
+                calculatedScore = true;
+            }
+        }
+    }
+
+    public void EndGame()
+    {
+        endGame++;
+        EndTurn();
+    }
+
+    private void CalculateScoreP1()
+    {
+        List<DestinationCardManager> P1tickets = cardDatabase.P1tickets;
+        
+
+        foreach (DestinationCardManager ticket in P1tickets)
+        {
+            bool foundDestination1 = false;
+            bool foundDestination2 = false;
+
+            foreach (RoutesDatabase route in playerOneClaimedRoutes)
+            {
+                if (!foundDestination1 && (ticket.destination1.ToString() == route.destination1.ToString() || ticket.destination1.ToString() == route.destination2.ToString()))
+                {
+                    foundDestination1 = true;
+                    if (ticket.destination2.ToString() == route.destination1.ToString() || ticket.destination2.ToString() == route.destination2.ToString())
+                    {
+                        foundDestination2 = true;
+                        break;
+                    }
+                }
+                else if (!foundDestination2 && (ticket.destination2.ToString() == route.destination1.ToString() || ticket.destination2.ToString() == route.destination2.ToString()))
+                {
+                    foundDestination2 = true;
+                    if (ticket.destination1.ToString() == route.destination1.ToString() || ticket.destination1.ToString() == route.destination2.ToString())
+                    {
+                        foundDestination1 = true;
+                        break; 
+                    }
+                }
+            }
+
+            if (foundDestination1 && foundDestination2)
+            {
+                P1finalScore += ticket.points;
+            }
+            else
+            {
+                P1finalScore -= ticket.points;
+            }
+        }
+    }
+
+    private void CalculateScoreP2()
+    {
+        List<DestinationTicketObject> P2tickets = deckManager.P2tickets;
+
+        foreach (DestinationTicketObject ticket in P2tickets)
+        {
+            bool foundDestination1 = false;
+            bool foundDestination2 = false;
+
+            foreach (RouteObject route in playerOneClaimedRoutes)
+            {
+                if (!foundDestination1 && (ticket.destination1.ToString() == route.destination1.ToString() || ticket.destination1.ToString() == route.destination2.ToString()))
+                {
+                    foundDestination1 = true;
+                    if (ticket.destination2.ToString() == route.destination1.ToString() || ticket.destination2.ToString() == route.destination2.ToString())
+                    {
+                        foundDestination2 = true;
+                        break;
+                    }
+                }
+                else if (!foundDestination2 && (ticket.destination2.ToString() == route.destination1.ToString() || ticket.destination2.ToString() == route.destination2.ToString()))
+                {
+                    foundDestination2 = true;
+                    if (ticket.destination1.ToString() == route.destination1.ToString() || ticket.destination1.ToString() == route.destination2.ToString())
+                    {
+                        foundDestination1 = true;
+                        break;
+                    }
+                }
+            }
+
+            if (foundDestination1 && foundDestination2)
+            {
+                P2finalScore += ticket.points;
+            }
+            else
+            {
+                P2finalScore -= ticket.points;
+            }
+        }
+    }
